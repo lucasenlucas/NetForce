@@ -21,15 +21,29 @@ Part of the NetSuite ecosystem — consistent tooling for developers, students a
 
 ---
 
-## Installation
+## ⚡ Quick Install
 
-Requires [Go 1.21+](https://golang.org/dl/)
+**One command — requires [Go 1.21+](https://golang.org/dl/)**
 
 ```bash
-git clone https://github.com/lucasenlucas/netforce.git
-cd netforce
+go install github.com/lucasenlucas/netforce/cmd/netforce@latest
+```
+
+After install, run it anywhere:
+```bash
+netforce -f explain
+```
+
+---
+
+## Manual Installation (build from source)
+
+```bash
+git clone https://github.com/lucasenlucas/NetForce.git
+cd NetForce
 go mod tidy
 go build -o netforce ./cmd/netforce
+./netforce -f explain
 ```
 
 ---
