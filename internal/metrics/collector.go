@@ -46,6 +46,12 @@ func (c *Collector) Add(r Result) {
 	c.mu.Unlock()
 }
 
+func (c *Collector) AddBatch(batch []Result) {
+	c.mu.Lock()
+	c.results = append(c.results, batch...)
+	c.mu.Unlock()
+}
+
 func (c *Collector) Snapshot() []Result {
 	c.mu.Lock()
 	defer c.mu.Unlock()

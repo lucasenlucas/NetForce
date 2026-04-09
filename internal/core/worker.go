@@ -10,20 +10,35 @@ import (
 	"github.com/lucasenlucas/netforce/internal/metrics"
 )
 
-// worker sends HTTP GET requests in a loop until the context is cancelled
 func worker(ctx context.Context, client *http.Client, url string, pacer Pacer, col *metrics.Collector) {
+	batch := make([]metrics.Result, 0, 100)
+	
+	flush := func() {
+		if len(batch) > 0 {
+			col.AddBatch(batch)
+			batch = batch[:0]
+		}
+	}
+	
 	for {
 		select {
 		case <-ctx.Done():
+			flush()
 			return
 		default:
 			// Wait for the pacer to permit the next request
 			if err := pacer.Wait(ctx); err != nil {
+				flush()
 				return
 			}
 
 			result := doRequest(ctx, client, url)
-			col.Add(result)
+			batch = append(batch, result)
+			
+			// Flush every 100 results to dramatically decrease lock contention
+			if len(batch) >= 100 {
+				flush()
+			}
 		}
 	}
 }
