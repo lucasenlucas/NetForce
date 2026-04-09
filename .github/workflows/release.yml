@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'V*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          mkdir -p dist
+          GOOS=darwin  GOARCH=arm64  go build -o dist/netforce-darwin-arm64      ./cmd/netforce
+          GOOS=darwin  GOARCH=amd64  go build -o dist/netforce-darwin-amd64      ./cmd/netforce
+          GOOS=linux   GOARCH=amd64  go build -o dist/netforce-linux-amd64       ./cmd/netforce
+          GOOS=linux   GOARCH=arm64  go build -o dist/netforce-linux-arm64       ./cmd/netforce
+          GOOS=windows GOARCH=amd64  go build -o dist/netforce-windows-amd64.exe ./cmd/netforce
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          name: NetForce ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## NetForce ${{ steps.version.outputs.VERSION }}
+
+            ### Install (macOS & Linux)
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/lucasenlucas/NetForce/main/install.sh | sh
+            ```
+
+            ### Usage
+            ```bash
+            netforce --help
+            netforce -f explain
+            netforce -d example.com -f quick
+            netforce -d example.com -f stress -r 50 -t 10 --duration 30
+            ```
+
+            ### Binaries
+            | Platform | File |
+            |---|---|
+            | macOS arm64 (M1/M2/M3) | `netforce-darwin-arm64` |
+            | macOS amd64 (Intel) | `netforce-darwin-amd64` |
+            | Linux amd64 | `netforce-linux-amd64` |
+            | Linux arm64 | `netforce-linux-arm64` |
+            | Windows amd64 | `netforce-windows-amd64.exe` |
+
+            > ⚠️ For authorized testing only. Part of the NET Toolkit by Lucas Mangroelal.
+          files: |
+            dist/netforce-darwin-arm64
+            dist/netforce-darwin-amd64
+            dist/netforce-linux-amd64
+            dist/netforce-linux-arm64
+            dist/netforce-windows-amd64.exe
+          draft: false
+          prerelease: false
