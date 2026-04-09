@@ -35,6 +35,8 @@ func Run(ctx context.Context, cfg RunConfig) *metrics.Collector {
 		pacer = NewSpikePacer(cfg.Rate, cfg.Threads, cfg.Duration)
 	case "pulse":
 		pacer = NewPulsePacer(cfg.Rate, cfg.Threads)
+	case "unlimited":
+		pacer = NewUnlimitedPacer()
 	default:
 		pacer = NewConstantPacer(cfg.Rate, cfg.Threads)
 	}
