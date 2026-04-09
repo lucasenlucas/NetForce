@@ -1,51 +1,62 @@
-# NetForce
+<p align="center">
+  <img src="https://github.com/lucasenlucas/lucas_cdn/blob/main/Scherm%C2%ADafbeelding%202026-04-09%20om%2017.34.29.png?raw=true" alt="NetForce Banner"/>
+</p>
 
-```
-  _   _      _   _____
- | \ | |    | | |  ___|
- |  \| | ___| |_| |_ ___  _ __ ___ ___
- | . ^ |/ _ \ __|  _/ _ \| '__/ __/ _ \
- | |\  |  __/ |_| || (_) | | | (_|  __/
- |_| \_|\___|\__\_| \___/|_|  \___\___|
-```
+<p align="center">
+  <strong>NetForce</strong> — Performance & Resilience Testing CLI
+</p>
 
-**Performance & Resilience Testing Tool for Websites and Web Services.**
+<p align="center">
+  Stress • Load • Behavior — test your system before it breaks
+</p>
 
-Part of the NetSuite ecosystem — consistent tooling for developers, students and admins.
-
----
-
-> ⚠️ **AUTHORIZED USE ONLY**
-> NetForce is designed strictly for systems you own or have explicit written permission to test.
-> Unauthorized use is illegal and unethical. This tool is not for offensive use.
+<p align="center">
+  <strong>Know your limits. Before your users do.</strong>
+</p>
 
 ---
 
-## ⚡ Quick Install
+## ⚡ What is NetForce?
 
-**macOS & Linux — one command, no Go required:**
+NetForce is a **high-performance load testing CLI** built to simulate real-world traffic on websites and APIs.
 
+No dashboards. No setup hell.
+
+Just:
+`netforce` → push your system to its limits
+
+
+Built as part of the **NetSuite ecosystem** — consistent tooling alongside NetScope.
+
+---
+
+## ⚠️ Authorized Use Only
+
+NetForce is designed strictly for:
+
+- Systems you own  
+- Systems you have **explicit written permission** to test  
+
+Unauthorized use is illegal. Don’t be that guy.
+
+---
+
+## 🚀 Quick Install
+
+### macOS & Linux
 ```bash
 curl -fsSL https://raw.githubusercontent.com/lucasenlucas/NetForce/main/install.sh | sh
 ```
-
-After install, run it anywhere:
+Run instantly:
 ```bash
 netforce -f explain
 ```
-
-> The installer auto-detects your OS and architecture (macOS arm64/amd64, Linux arm64/amd64).
-> Windows users can download the binary directly from the [Releases page](https://github.com/lucasenlucas/NetForce/releases/latest).
-
-**Or install manually with Go:**
+### Go install
 ```bash
 go install github.com/lucasenlucas/netforce/cmd/netforce@latest
 ```
 
----
-
-## Manual Installation (build from source)
-
+### Manual build
 ```bash
 git clone https://github.com/lucasenlucas/NetForce.git
 cd NetForce
@@ -54,102 +65,75 @@ go build -o netforce ./cmd/netforce
 ./netforce -f explain
 ```
 
----
-
-## CLI Style
-
-NetForce follows the same flag philosophy as **NetScope**:
-
-```
+### CLI Philosophy
+Same system as NetScope → no learning curve.
+```bash
 netforce -d <domain> -f <feature> [options]
 ```
 
-| Flag | Description |
-|---|---|
-| `-d, --domain` | Target domain or URL |
-| `-f, --feature` | Feature to run (see below) |
-| `-r, --rate` | Requests per second (default: 10) |
-| `-t, --threads` | Concurrent workers (default: 5) |
-| `--duration` | Test duration in seconds (default: 10) |
-| `--timeout` | Request timeout per connection (default: 10s) |
-| `--path` | URL endpoint path (default: /) |
-| `--https` | Force HTTPS |
-| `--safe` | Enable safe mode caps |
-| `--output` | Output format: simple \| detailed \| json |
-| `--report` | Save report to file after test |
-| `--detect-rate-limit` | Detect HTTP 429 rate limiting |
-| `--analyze-performance` | Analyze response time degradation |
+### Core Flags
 
----
+| Flag                    | Description              |
+| ----------------------- | ------------------------ |
+| `-d, --domain`          | Target domain or URL     |
+| `-f, --feature`         | Feature to run           |
+| `-r, --rate`            | Requests per second      |
+| `-t, --threads`         | Concurrent workers       |
+| `--duration`            | Test duration            |
+| `--timeout`             | Request timeout          |
+| `--path`                | Endpoint path            |
+| `--https`               | Force HTTPS              |
+| `--safe`                | Safe caps enabled        |
+| `--output`              | simple \| detailed \| json |
+| `--report`              | Save report              |
+| `--detect-rate-limit`   | Detect HTTP 429          |
+| `--analyze-performance` | Detect slowdown          |
+| `--live`                | Live terminal stats      |
 
-## Features
-
-### `-f stress` — Constant Load Test
-Sends a steady, continuous stream of requests.
-Best for understanding baseline performance.
-
+## Core Features
+### stress — Constant Load
+Push steady traffic → measure baseline performance
 ```bash
 netforce -d example.com -f stress -r 50 -t 5 --duration 30
 ```
-
-### `-f ramp` — Gradual Load Increase *(coming soon)*
-Slowly increases traffic from low to high.
-Useful for finding the server's breaking point.
-
+### ramp
+Gradually increase load → find breaking point
 ```bash
-netforce -d example.com -f ramp -r 100 --duration 60 --report
+netforce -d example.com -f ramp -r 100 --duration 60
 ```
-
-### `-f spike` — Sudden Burst *(coming soon)*
-Sends a large burst of traffic for a short time.
-Simulates a flash sale or viral post.
-
+### spike
+Short aggressive burst → simulate viral traffic
 ```bash
-netforce -d example.com -f spike -r 500 --duration 20
+netforce -d example.com -f spike -r 500 --duration 10
 ```
-
-### `-f pulse` — Repeating Waves *(coming soon)*
-Alternates between high and low traffic.
-Models real-world peak patterns.
-
+### pulse
+Traffic waves → simulate real usage patterns
 ```bash
-netforce -d example.com -f pulse -r 80 --duration 60
+netforce -d example.com -f pulse -r 80 --duration 30
 ```
-
-### `-f quick` — Beginner Safe Test
-Runs a very gentle test using built-in safe defaults.
-Great for your first look at server behavior.
-
+### quick — Safe Mode
+Beginner-friendly, low-impact test
 ```bash
 netforce -d example.com -f quick
 ```
-
-### `-f explain` — Plain English Explanation
-Explains what NetForce does in simple language.
-No target required.
-
+### explain
+Plain explanation of what NetForce does
 ```bash
 netforce -f explain
 ```
 
----
-
-## Output Examples
-
-### Simple (default)
+## Output Default
 ```
 ╔══════════════════════════════════════════╗
 ║       NetForce — Test Results            ║
 ╚══════════════════════════════════════════╝
 
   Target:                example.com
-  Feature:               stress  (mode: constant)
-  Configured Rate:       50 req/s
-  Test Duration:         30.0s
+  Feature:               stress
+  Rate:                  50 req/s
+  Duration:              30s
 
   Total Requests:        1482
-  Successes:             1479
-  Errors:                3
   Success Rate:          99.80%
   Error Rate:            0.20%
 
@@ -157,30 +141,48 @@ netforce -f explain
   Max Latency:           290ms
 ```
 
-### JSON output
+### Detailed & JSON Output
+Get breakdown of status codes and latency percentiles (p50/p90/p99):
 ```bash
+netforce -d example.com -f stress -r 30 --duration 10 --output detailed
 netforce -d example.com -f stress -r 30 --duration 10 --output json
 ```
 
----
+## Safety First
+NetForce is built to protect users and systems:
+* quick mode uses safe defaults
+* --safe enforces strict caps
+* Confirmation prompt before execution
+* Clear warnings in CLI
+(especially so that I also stay out of trouble with the law.)
 
-## Safe Testing
+## Why NetForce?
+Most load tools are:
+* Overcomplicated
+* Slow to setup
+* UI-heavy and bloated
 
-NetForce is built with safety-first defaults:
-
-- **Quick mode** always uses minimal safe limits
-- **`--safe`** caps rate, threads and duration for cautious testing
-- **Confirmation prompt** always appears before any test starts
-- All help text and output discourages unauthorized use
-
----
+NetForce is:
+* Fast
+* Focused
+* Scriptable
+* Built for real usage
 
 ## Roadmap
+* Live terminal dashboard (--live) ✅
+* Advanced latency stats (p50 / p90 / p99) ✅
+* Multi-endpoint testing
+* POST payload support
 
-- [ ] `-f ramp` — Full gradual load implementation
-- [ ] `-f spike` — Full spike burst implementation
-- [ ] `-f pulse` — Full pulse wave implementation
-- [ ] `--live` — Live refreshing terminal stats
-- [ ] `--output detailed` — Per-status breakdown + p50/p90/p99 latency
-- [ ] Multi-path testing support
-- [ ] POST method with payload support
+## Author
+Built by Lucas Mangroelal 
+https://lucasmangroelal.nl
+
+❤️ Support
+* Star the repo!
+* Contribute!
+* Share it!
+
+## ⚠️ Disclaimer
+This tool is for educational and authorized testing only.
+Do not use against systems without permission.
