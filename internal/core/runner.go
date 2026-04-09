@@ -27,7 +27,12 @@ func Run(ctx context.Context, cfg RunConfig) *metrics.Collector {
 
 	var pacer Pacer
 	switch cfg.ModeName {
-	// TODO: add ramp, spike, pulse cases once their pacers are implemented
+	case "ramp":
+		pacer = NewRampPacer(cfg.Rate, cfg.Threads, cfg.Duration)
+	case "spike":
+		pacer = NewSpikePacer(cfg.Rate, cfg.Threads, cfg.Duration)
+	case "pulse":
+		pacer = NewPulsePacer(cfg.Rate, cfg.Threads)
 	default:
 		pacer = NewConstantPacer(cfg.Rate, cfg.Threads)
 	}
