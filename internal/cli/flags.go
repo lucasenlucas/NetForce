@@ -66,13 +66,15 @@ func Parse() *Config {
 
 func PrintUsage() {
 	color.Cyan(`
-  _   _      _   _____
- | \ | |    | | |  ___|
- |  \| | ___| |_| |_ ___  _ __ ___ ___
- | . ^ |/ _ \ __|  _/ _ \| '__/ __/ _ \
- | |\  |  __/ |_| || (_) | | | (_|  __/
- |_| \_|\___|\__\_| \___/|_|  \___\___|
+ ███╗   ██╗███████╗████████╗███████╗ ██████╗ ██████╗  ██████╗███████╗
+ ████╗  ██║██╔════╝╚══██╔══╝██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝
+ ██╔██╗ ██║█████╗     ██║   █████╗  ██║   ██║██████╔╝██║     █████╗
+ ██║╚██╗██║██╔══╝     ██║   ██╔══╝  ██║   ██║██╔══██╗██║     ██╔══╝
+ ██║ ╚████║███████╗   ██║   ██║     ╚██████╔╝██║  ██║╚██████╗███████╗
+ ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝
 `)
+	color.White("  A tool made by Lucas Mangroelal — part of the NET Toolkit")
+	fmt.Println()
 	fmt.Println("  Performance & Resilience Testing Tool")
 	fmt.Println("  For authorized testing on systems you own or have explicit permission to test.")
 	fmt.Println()
