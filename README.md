@@ -23,15 +23,23 @@ Part of the NetSuite ecosystem — consistent tooling for developers, students a
 
 ## ⚡ Quick Install
 
-**One command — requires [Go 1.21+](https://golang.org/dl/)**
+**macOS & Linux — one command, no Go required:**
 
 ```bash
-go install github.com/lucasenlucas/netforce/cmd/netforce@latest
+curl -fsSL https://raw.githubusercontent.com/lucasenlucas/NetForce/main/install.sh | sh
 ```
 
 After install, run it anywhere:
 ```bash
 netforce -f explain
+```
+
+> The installer auto-detects your OS and architecture (macOS arm64/amd64, Linux arm64/amd64).
+> Windows users can download the binary directly from the [Releases page](https://github.com/lucasenlucas/NetForce/releases/latest).
+
+**Or install manually with Go:**
+```bash
+go install github.com/lucasenlucas/netforce/cmd/netforce@latest
 ```
 
 ---
