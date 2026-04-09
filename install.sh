@@ -2,10 +2,18 @@
 set -e
 
 REPO="lucasenlucas/NetForce"
-VERSION="V09.04.2026"
-BASE_URL="https://github.com/${REPO}/releases/download/${VERSION}"
 INSTALL_DIR="/usr/local/bin"
 BIN_NAME="netforce"
+
+# Always fetch the latest release version from GitHub
+VERSION="$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name"' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')"
+
+if [ -z "$VERSION" ]; then
+  echo "Error: Could not fetch latest version from GitHub."
+  exit 1
+fi
+
+BASE_URL="https://github.com/${REPO}/releases/download/${VERSION}"
 
 # Detect OS and architecture
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
