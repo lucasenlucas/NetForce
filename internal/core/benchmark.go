@@ -25,10 +25,11 @@ func RunBenchmark() {
 	defer ts.Close()
 
 	// 2. Configure an extreme load configuration
-	// We use 100 threads per CPU core to saturate connection dialing capability
-	threads := runtime.NumCPU() * 100
-	if threads < 200 {
-		threads = 200 // minimum baseline
+	// We use 250 threads per CPU core to perfectly saturate CPU limits 
+	// without crashing the machine's local socket file descriptor limit (ulimit -n)
+	threads := runtime.NumCPU() * 250
+	if threads < 500 {
+		threads = 500 // minimum baseline
 	}
 	duration := 5 // 5 seconds is enough to find the ceiling without burning the laptop
 
