@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"runtime"
 
 	"github.com/fatih/color"
 )
@@ -23,50 +22,74 @@ func RunBenchmark() {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer ts.Close()
-
-	// 2. Configure an extreme load configuration
-	// We use 250 threads per CPU core to perfectly saturate CPU limits 
-	// without crashing the machine's local socket file descriptor limit (ulimit -n)
-	threads := runtime.NumCPU() * 250
-	if threads < 500 {
-		threads = 500 // minimum baseline
-	}
-	duration := 5 // 5 seconds is enough to find the ceiling without burning the laptop
-
-	color.Yellow("  Saturating local cores (%d threads) for %d seconds...", threads, duration)
-	fmt.Println()
-
-	runCfg := RunConfig{
-		URL:      ts.URL,
-		Rate:     0, // Unused by unlimited pacer
-		Threads:  threads,
-		Duration: duration,
-		ModeName: "unlimited",
-		Timeout:  5,
-		Live:     true,
-	}
-
-	// 3. Blast the local endpoint
-	col := Run(context.Background(), runCfg)
-
-	// 4. Calculate performance
-	totalReqs := col.Total()
-	actualDur := col.TestDuration().Seconds()
 	
-	var rps int
-	if actualDur > 0 {
-		rps = int(float64(totalReqs) / actualDur)
+	// 2. We explicitly start an escalation loop to find the exact local bottleneck
+	var maxRps int
+	var maxThreads int
+
+	currentThreads := 500
+	step := 500
+
+	for {
+		color.Yellow("  Testing capacity at %d threads... (2 second burst)", currentThreads)
+
+		runCfg := RunConfig{
+			URL:      ts.URL,
+			Rate:     0, // Unused by unlimited pacer
+			Threads:  currentThreads,
+			Duration: 2, // Short bursts to find limits quickly
+			ModeName: "unlimited",
+			Timeout:  5,
+			Live:     false, // Disable interactive UI spam during the loop
+		}
+
+		// 3. Blast the local endpoint
+		col := Run(context.Background(), runCfg)
+
+		// 4. Calculate performance
+		totalReqs := col.Total()
+		actualDur := col.TestDuration().Seconds()
+		
+		var rps int
+		if actualDur > 0 {
+			rps = int(float64(totalReqs) / actualDur)
+		}
+		successRate := col.SuccessRate()
+
+		fmt.Printf("\r\033[2K\r  -> %d threads | %.1f%% success | %d req/s \n", currentThreads, successRate, rps)
+
+		// Limit Case A: Socket Exhaustion / Network Crash
+		if successRate < 98.0 {
+			color.Red("  [LIMIT REACHED] System connection limit or socket exhaustion detected!")
+			break
+		}
+
+		// Limit Case B: CPU Plateau (RPS dropped or stopped growing)
+		if maxRps > 0 && rps <= int(float64(maxRps)*1.02) {
+			color.Yellow("  [LIMIT REACHED] Hardware throughput peaked and plateaud.")
+			break
+		}
+
+		// Save the new peak and escalate
+		maxRps = rps
+		maxThreads = currentThreads
+
+		currentThreads += step
+		if currentThreads > 50000 {
+			color.Yellow("  [CAPPED] Reached extreme ceiling, stopping for safety.")
+			break
+		}
 	}
 
 	// 5. Provide analysis and recommendation
 	fmt.Println()
-	color.Green("  Benchmark Complete!")
-	fmt.Printf("  Max Generated Load: %d req/s\n", rps)
-	fmt.Printf("  Total Requests sent in %.1fs: %d\n", actualDur, totalReqs)
+	color.Green("  Benchmark Calibration Complete!")
+	fmt.Printf("  Max Safe Threads: %d\n", maxThreads)
+	fmt.Printf("  Max Generated Load: %d req/s\n", maxRps)
 	fmt.Println()
 
 	// Advise a safe "extreme" limit using 80% to leave headroom for OS/Background tasks during real tests
-	recommendedMaxRate := int(float64(rps) * 0.8)
+	recommendedMaxRate := int(float64(maxRps) * 0.8)
 	// Round down to nearest 500 for a clean number
 	if recommendedMaxRate > 500 {
 		recommendedMaxRate = (recommendedMaxRate / 500) * 500
@@ -76,6 +99,6 @@ func RunBenchmark() {
 
 	color.Cyan("  💡 Configuration Advice for Extreme Tests:")
 	fmt.Println("  To push an external server to YOUR absolute limit without crashing your own PC, use:")
-	color.White("  --rate %d --threads %d\n", recommendedMaxRate, threads)
+	color.White("  --rate %d --threads %d\n", recommendedMaxRate, maxThreads)
 	fmt.Println()
 }
