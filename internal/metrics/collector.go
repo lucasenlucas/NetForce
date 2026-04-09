@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"sort"
 	"sync"
 	"time"
 )
@@ -115,4 +116,41 @@ func (c *Collector) TestDuration() time.Duration {
 		return c.endTime.Sub(c.startTime)
 	}
 	return time.Since(c.startTime)
+}
+
+func (c *Collector) Latencies() []time.Duration {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if len(c.results) == 0 {
+		return nil
+	}
+	out := make([]time.Duration, len(c.results))
+	for i, r := range c.results {
+		out[i] = r.Duration
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i] < out[j]
+	})
+	return out
+}
+
+func (c *Collector) Percentile(sorted []time.Duration, p float64) time.Duration {
+	if len(sorted) == 0 {
+		return 0
+	}
+	idx := int(float64(len(sorted)) * p)
+	if idx >= len(sorted) {
+		idx = len(sorted) - 1
+	}
+	return sorted[idx]
+}
+
+func (c *Collector) StatusCodes() map[int]int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	counts := make(map[int]int)
+	for _, r := range c.results {
+		counts[r.StatusCode]++
+	}
+	return counts
 }

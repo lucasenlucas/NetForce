@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -16,6 +17,7 @@ type RunConfig struct {
 	Duration int
 	ModeName string
 	Timeout  int
+	Live     bool
 }
 
 // Run launches the test and returns the collected metrics
@@ -50,7 +52,38 @@ func Run(ctx context.Context, cfg RunConfig) *metrics.Collector {
 		}()
 	}
 
+	if cfg.Live {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			liveDashboard(runCtx, col)
+		}()
+	}
+
 	wg.Wait()
 	col.Stop()
 	return col
+}
+
+func liveDashboard(ctx context.Context, col *metrics.Collector) {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			// safely clear line
+			fmt.Print("\r\033[2K\r")
+			return
+		case <-ticker.C:
+			reqs := col.Total()
+			var rps float64
+			dur := col.TestDuration().Seconds()
+			if dur > 0 {
+				rps = float64(reqs) / dur
+			}
+			succRate := col.SuccessRate()
+			avgLat := col.AvgDuration().Milliseconds()
+			fmt.Printf("\r  Live Stats: %d reqs | %.0f req/s | %.1f%% success | %dms avg latency ...", reqs, rps, succRate, avgLat)
+		}
+	}
 }

@@ -10,23 +10,32 @@ import (
 )
 
 type Summary struct {
-	Target        string  `json:"target"`
-	Feature       string  `json:"feature"`
-	Mode          string  `json:"mode"`
-	ConfiguredRate int    `json:"configured_rate_rps"`
-	TotalRequests  int    `json:"total_requests"`
-	Successes      int    `json:"successes"`
-	Errors         int    `json:"errors"`
-	SuccessRate    float64 `json:"success_rate_pct"`
-	ErrorRate      float64 `json:"error_rate_pct"`
-	AvgLatencyMs   float64 `json:"avg_latency_ms"`
-	MaxLatencyMs   float64 `json:"max_latency_ms"`
-	DurationSec    float64 `json:"duration_sec"`
-	RateLimitHit   bool    `json:"rate_limit_detected"`
-	Analysis       string  `json:"performance_analysis,omitempty"`
+	Target        string      `json:"target"`
+	Feature       string      `json:"feature"`
+	Mode          string      `json:"mode"`
+	ConfiguredRate int        `json:"configured_rate_rps"`
+	TotalRequests  int        `json:"total_requests"`
+	Successes      int        `json:"successes"`
+	Errors         int        `json:"errors"`
+	SuccessRate    float64    `json:"success_rate_pct"`
+	ErrorRate      float64    `json:"error_rate_pct"`
+	AvgLatencyMs   float64    `json:"avg_latency_ms"`
+	MaxLatencyMs   float64    `json:"max_latency_ms"`
+	P50LatencyMs   float64    `json:"p50_latency_ms,omitempty"`
+	P90LatencyMs   float64    `json:"p90_latency_ms,omitempty"`
+	P99LatencyMs   float64    `json:"p99_latency_ms,omitempty"`
+	StatusCodes    map[int]int `json:"status_codes,omitempty"`
+	DurationSec    float64    `json:"duration_sec"`
+	RateLimitHit   bool       `json:"rate_limit_detected"`
+	Analysis       string     `json:"performance_analysis,omitempty"`
 }
 
 func BuildSummary(target, feature, mode string, rate int, col *metrics.Collector, rateLimitHit bool, analysis string) *Summary {
+	lats := col.Latencies()
+	p50 := col.Percentile(lats, 0.50)
+	p90 := col.Percentile(lats, 0.90)
+	p99 := col.Percentile(lats, 0.99)
+
 	return &Summary{
 		Target:         target,
 		Feature:        feature,
@@ -39,6 +48,10 @@ func BuildSummary(target, feature, mode string, rate int, col *metrics.Collector
 		ErrorRate:      100 - col.SuccessRate(),
 		AvgLatencyMs:   float64(col.AvgDuration().Milliseconds()),
 		MaxLatencyMs:   float64(col.MaxDuration().Milliseconds()),
+		P50LatencyMs:   float64(p50.Milliseconds()),
+		P90LatencyMs:   float64(p90.Milliseconds()),
+		P99LatencyMs:   float64(p99.Milliseconds()),
+		StatusCodes:    col.StatusCodes(),
 		DurationSec:    col.TestDuration().Seconds(),
 		RateLimitHit:   rateLimitHit,
 		Analysis:       analysis,
@@ -75,8 +88,30 @@ func PrintSimple(s *Summary) {
 
 func PrintDetailed(s *Summary) {
 	PrintSimple(s)
-	// TODO: Add per-status-code breakdown and percentile latencies (p50/p90/p99)
-	fmt.Println("  [detailed mode] — extended breakdown coming soon")
+
+	color.Cyan("  ─────────────────────────────────────────")
+	color.Yellow("  Detailed Latency Breakdown:")
+	fmt.Printf("  %-22s %.0fms\n", "p50 (Median):", s.P50LatencyMs)
+	fmt.Printf("  %-22s %.0fms\n", "p90:", s.P90LatencyMs)
+	fmt.Printf("  %-22s %.0fms\n", "p99:", s.P99LatencyMs)
+	fmt.Println()
+
+	color.Yellow("  Status Code Distribution:")
+	if len(s.StatusCodes) == 0 {
+		fmt.Println("  No responses received.")
+	} else {
+		for code, count := range s.StatusCodes {
+			label := fmt.Sprintf("[%d]", code)
+			if code >= 200 && code < 300 {
+				color.Green("  %-22s %d requests\n", label, count)
+			} else if code >= 400 && code < 500 {
+				color.Yellow("  %-22s %d requests\n", label, count)
+			} else {
+				color.Red("  %-22s %d requests\n", label, count)
+			}
+		}
+	}
+	fmt.Println()
 }
 
 func PrintJSON(s *Summary) {

@@ -89,7 +89,7 @@ func runQuick(cfg *cli.Config) {
 	fmt.Println()
 
 	url := buildURL(cfg.Domain, "/", false)
-	runCfg := RunConfig{URL: url, Rate: 10, Threads: 2, Duration: 10, ModeName: "constant", Timeout: 10}
+	runCfg := RunConfig{URL: url, Rate: 10, Threads: 2, Duration: 10, ModeName: "constant", Timeout: 10, Live: cfg.Live}
 	col := Run(context.Background(), runCfg)
 
 	results := col.Snapshot()
@@ -149,7 +149,7 @@ func runTest(cfg *cli.Config, feature, defaultMode string) {
 	fmt.Printf("  Feature: %s | Mode: %s | Rate: %d req/s | Threads: %d | Duration: %ds\n\n",
 		feature, mode, rate, threads, duration)
 
-	runCfg := RunConfig{URL: url, Rate: rate, Threads: threads, Duration: duration, ModeName: mode, Timeout: cfg.Timeout}
+	runCfg := RunConfig{URL: url, Rate: rate, Threads: threads, Duration: duration, ModeName: mode, Timeout: cfg.Timeout, Live: cfg.Live}
 	col := Run(context.Background(), runCfg)
 
 	results := col.Snapshot()
