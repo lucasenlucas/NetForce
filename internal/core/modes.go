@@ -138,3 +138,19 @@ func sleepCtx(ctx context.Context, d time.Duration) error {
 		return nil
 	}
 }
+
+// UnlimitedPacer doesn't introduce any delays and fires requests continuously as fast as possible.
+type UnlimitedPacer struct{}
+
+func NewUnlimitedPacer() *UnlimitedPacer {
+	return &UnlimitedPacer{}
+}
+
+func (p *UnlimitedPacer) Wait(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return nil
+	}
+}

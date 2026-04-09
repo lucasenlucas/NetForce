@@ -26,6 +26,8 @@ func Dispatch(cfg *cli.Config) {
 	switch strings.ToLower(cfg.Feature) {
 	case "explain":
 		runExplain()
+	case "benchmark":
+		RunBenchmark()
 	case "quick":
 		runQuick(cfg)
 	case "stress":

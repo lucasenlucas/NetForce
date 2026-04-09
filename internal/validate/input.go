@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var validFeatures = []string{"stress", "ramp", "spike", "pulse", "quick", "explain"}
+var validFeatures = []string{"stress", "ramp", "spike", "pulse", "benchmark", "quick", "explain"}
 var validModes    = []string{"constant", "ramp", "spike", "pulse"}
 var validOutputs  = []string{"simple", "detailed", "json"}
 

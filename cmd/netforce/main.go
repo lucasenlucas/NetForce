@@ -27,8 +27,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Domain is required for all features except explain
-	if strings.ToLower(cfg.Feature) != "explain" && cfg.Domain == "" {
+	// Domain is required for all features except explain and benchmark
+	feat := strings.ToLower(cfg.Feature)
+	if feat != "explain" && feat != "benchmark" && cfg.Domain == "" {
 		color.Red("Error: -d <domain> is required for feature %q.\n", cfg.Feature)
 		fmt.Println("Example: netforce -d example.com -f stress -r 50 --duration 30")
 		os.Exit(1)

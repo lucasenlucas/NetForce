@@ -111,6 +111,11 @@ Traffic waves → simulate real usage patterns
 ```bash
 netforce -d example.com -f pulse -r 80 --duration 30
 ```
+### benchmark — Local Calibration
+Measures your own PC's absolute max capacities so you know how far you can push it without crashing your own hardware!
+```bash
+netforce -f benchmark
+```
 ### quick — Safe Mode
 Beginner-friendly, low-impact test
 ```bash
