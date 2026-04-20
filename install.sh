@@ -41,7 +41,7 @@ FILENAME="${BIN_NAME}-${OS}-${ARCH}"
 DOWNLOAD_URL="${BASE_URL}/${FILENAME}"
 
 echo ""
-echo "  NetForce Installer"
+echo "  NetForce Installer | Netseries Team"
 echo "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Version  : ${VERSION}"
 echo "  Platform : ${OS}/${ARCH}"

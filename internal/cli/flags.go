@@ -73,7 +73,7 @@ func PrintUsage() {
  ██║ ╚████║███████╗   ██║   ██║     ╚██████╔╝██║  ██║╚██████╗███████╗
  ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝
 `)
-	color.White("  A tool made by Lucas Mangroelal — part of the NET Toolkit")
+	color.White("  A tool by Netseries Team | Netseries.dev — part of the NET Toolkit")
 	fmt.Println()
 	fmt.Println("  Performance & Resilience Testing Tool")
 	fmt.Println("  For authorized testing on systems you own or have explicit permission to test.")

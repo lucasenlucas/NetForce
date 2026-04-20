@@ -158,8 +158,8 @@ NetForce is built to protect users and systems:
 * quick mode uses safe defaults
 * --safe enforces strict caps
 * Confirmation prompt before execution
+* Confirmation prompt before execution
 * Clear warnings in CLI
-(especially so that I also stay out of trouble with the law.)
 
 ## Why NetForce?
 Most load tools are:
@@ -179,9 +179,9 @@ NetForce is:
 * Multi-endpoint testing
 * POST payload support
 
-## Author
-Built by Lucas Mangroelal 
-https://lucasmangroelal.nl
+## 👨‍💻 Author & Contact
+Built by **Netseries Team** | [Netseries.dev](https://netseries.dev)
+Contact: [team@netseries.dev](mailto:team@netseries.dev)
 
 ❤️ Support
 * Star the repo!

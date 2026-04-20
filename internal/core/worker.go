@@ -76,9 +76,10 @@ func buildClient(threads int, timeout int) *http.Client {
 		Proxy:                 http.ProxyFromEnvironment,
 		DialContext:           dialer.DialContext,
 		ForceAttemptHTTP2:     true,
-		MaxIdleConns:          0,
-		MaxIdleConnsPerHost:   threads * 10,
-		MaxConnsPerHost:       threads * 10,
+		MaxIdleConns:          0, // 0 = unlimited global
+		MaxIdleConnsPerHost:   threads + 1000, // Never close idle connections, reuse them all
+		MaxConnsPerHost:       0, // 0 = unlimited active connections
+		DisableKeepAlives:     false,
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
