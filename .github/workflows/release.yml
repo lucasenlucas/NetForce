@@ -65,7 +65,7 @@ jobs:
             | Linux arm64 | `netforce-linux-arm64` |
             | Windows amd64 | `netforce-windows-amd64.exe` |
 
-            > ⚠️ For authorized testing only. Part of the NET Toolkit by Lucas Mangroelal.
+            > ⚠️ For authorized testing only. Part of the NET Toolkit by Netseries Team | Netseries.dev
           files: |
             dist/netforce-darwin-arm64
             dist/netforce-darwin-amd64
