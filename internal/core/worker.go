@@ -51,7 +51,7 @@ func doRequest(ctx context.Context, client *http.Client, url string) metrics.Res
 		return metrics.Result{StatusCode: 0, Duration: time.Since(start), Error: err.Error(), Timestamp: start}
 	}
 
-	req.Header.Set("User-Agent", "NetForce/1.0 (Performance Testing Tool)")
+	req.Header.Set("User-Agent", "NetForce/1.0.1 (Performance Testing Tool)")
 
 	resp, err := client.Do(req)
 	duration := time.Since(start)

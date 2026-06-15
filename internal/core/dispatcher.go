@@ -54,6 +54,7 @@ func runExplain() {
  ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝
 `)
 	color.White("  A tool by Netseries Team | Netseries.dev — part of the NET Toolkit")
+	color.White("  Version: V1.0.1")
 	fmt.Println()
 	color.Cyan("  What is NetForce?")
 

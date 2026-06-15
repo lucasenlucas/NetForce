@@ -31,6 +31,10 @@ type Config struct {
 func Parse() *Config {
 	cfg := &Config{}
 
+	var versionFlag bool
+	flag.BoolVar(&versionFlag, "v", false, "Print version and exit")
+	flag.BoolVar(&versionFlag, "version", false, "Print version and exit")
+
 	flag.StringVar(&cfg.Domain, "d", "", "Target domain or URL (e.g. example.com)")
 	flag.StringVar(&cfg.Domain, "domain", "", "Target domain or URL (e.g. example.com)")
 
@@ -61,6 +65,11 @@ func Parse() *Config {
 	flag.Usage = PrintUsage
 	flag.Parse()
 
+	if versionFlag {
+		fmt.Println("NetForce V1.0.1")
+		os.Exit(0)
+	}
+
 	return cfg
 }
 
@@ -74,6 +83,7 @@ func PrintUsage() {
  ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝
 `)
 	color.White("  A tool by Netseries Team | Netseries.dev — part of the NET Toolkit")
+	color.White("  Version: V1.0.1")
 	fmt.Println()
 	fmt.Println("  Performance & Resilience Testing Tool")
 	fmt.Println("  For authorized testing on systems you own or have explicit permission to test.")
